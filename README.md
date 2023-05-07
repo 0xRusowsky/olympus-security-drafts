@@ -9,6 +9,7 @@
 
 Olympus V3 uses the [Default Framework](https://github.com/fullyallocated/Default) to configure the protocol’s smart contracts and authorized addresses within the system.
 ![](diagrams/olympus-v3.png)
+![](diagrams/olympus-v3.svg)
 ### Relevant Contracts
 1. **Kernel.sol**
 	- Contract registry that manages all the contracts of the system. The `Kernel` is in charge of module and policy upgradability.
