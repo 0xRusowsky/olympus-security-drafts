@@ -8,14 +8,13 @@
 # Understanding Roles
 
 Olympus V3 uses the [Default Framework](https://github.com/fullyallocated/Default) to configure the protocol’s smart contracts and authorized addresses within the system.
-![](diagrams/olympus-v3.png)
 ![](diagrams/olympus-v3.svg)
 ### Relevant Contracts
 1. **Kernel.sol**
 	- Contract registry that manages all the contracts of the system. The `Kernel` is in charge of module and policy upgradability.
 	**Roles:**
 	- `executor`: Only address that can interact with the `Kernel` contract. The `executor` can install and upgrade modules, as well as approve and terminate policies.
-	![](olympus-kernel|1000)
+	![](diagrams/olympus-kernel.svg)
 2. **ROLES.sol**
 	- Module that stores all the active system roles.
 
@@ -29,7 +28,7 @@ Olympus V3 uses the [Default Framework](https://github.com/fullyallocated/Defau
 	- `ROLES.removeRole`
 	**Roles:**
 	- `admin`: Only address that can grant/revoke roles by calling `grantRole()` and `revokeRole()` respectively. It is also the only address that can propose a newAdmin by calling pushNewAdmin(). On top of that, the newAdmin must accept the role by calling pullNewAdmin().
-	![](olympus-roles)
+	![](diagrams/olympus-roles.svg)
 2. **Emergency.sol**
 	- Policy that has the ability to shutdown critical system functionalities.
 	**Dependencies:**
@@ -44,7 +43,7 @@ Olympus V3 uses the [Default Framework](https://github.com/fullyallocated/Defau
 	**Roles:**
 	- `emergency_shutdown`: has the ability to shutdown Treasury withdrawals by calling `shutdownWithdrawals()`, Minting capabilities by calling `shutdownMinting()`, or both by calling `shutdown()`. This role is held by the Emergency Multisig, requiring only 2 confirmations out of 8 signers.
 	- `emergency_restart`: has the ability to restart Treasury withdrawals by calling `restartWithdrawals()`, Minting capabilities by calling `restartMinting()`, or both by calling `restart()`. This role is held by the DAO Multisig, requiring 4 confirmations out of 8 signers.
-	![](olympus-emergency|600)
+	![](diagrams/olympus-emergency.svg)
 3. **Heart.sol**
 	- Policy that provides keeper rewards to call the `beat()` function which orchestrates state updates and fuels Olympus' market operations.
 	**Dependencies:**
@@ -54,7 +53,7 @@ Olympus V3 uses the [Default Framework](https://github.com/fullyallocated/Defau
 	- `PRICE.updateMovingAverage`
 	**Roles:**
 	- Only the `heart_admin` controls the liveliness of the `Heart` contract, as well as the `Operator` implementation and the reward tokens paid to keepers.
-	![](olympus-heart|500)
+	![](diagrams/olympus-heart.svg)
 
 4. **Operator.sol**
 	- Policy that performs market operations to enforce OlympusDAO's OHM price range guidance policies against a specific reserve asset. These market operations are only performed under certain conditions and up to a specific capacity before the market must stabilize to regenerate more capacity.
@@ -84,7 +83,7 @@ Olympus V3 uses the [Default Framework](https://github.com/fullyallocated/Defau
 	- `operator_policy`: Has the ability to execute policy-related functions that control the system liveliness and determine the parameters under which the system works. The liveliness functions are critical, since they can activate/deactivate the system, as well as regenerate the Treasury's capacity to perform market operations. Limited to the Policy Multisig contract.
 	- `operator_operate`: Has the ability to make the system work. Executes different core functions depending on the system state. Limited to the `Heart` contract (triggered by keepers) and the DAO Multisig.
 	- `operator_reporter`: Records a bond purchase and updates capacity accordingly. Limited to the `BondCallback` contract.
-	![](olympus-operator|700)
+	![](diagrams/olympus-operator.svg)
 5. **TreasuryCustodian.sol**
 	- Policy that gatekeeps the Treasury. Prevents unauthorized contracts from interacting with the Treasury.
 	**Dependencies:**
@@ -99,7 +98,7 @@ Olympus V3 uses the [Default Framework](https://github.com/fullyallocated/Defau
 	- `TRSRY.decreaseDebtorApproval`
 	**Roles:**
 	- `custodian`: The solely manager of Treasury access. Has the ability to grant/revoke withdrawal/debt capabilities to external contracts. It can also withdraw funds form the Treasury directly. Finally, it can also revoke previous approvals for policies. Limited to the DAO Multisig.
-	![](olympus-custodian|700)
+	![](diagrams/olympus-custodian.svg)
 6. **BondCallback.sol**
 	- Policy that handles the calls from the bond markets to gatekeep the interactions with the Treasury.
 	**Dependencies:**
@@ -115,7 +114,7 @@ Olympus V3 uses the [Default Framework](https://github.com/fullyallocated/Defau
 	**Roles:**
 	- `callback_admin`: Has the ability to set he operator contract for the callback to use to report bond purchases. It also has the ability to send tokens in this contract to the Treasury.
 	- `callback_whitelist`: Can whitelist a bond Teller, as well as blacklist specific bond markets in case there's an issue with the Teller.
-	![](olympus-callback|500)
+	![](diagrams/olympus-callback.svg)
 7. **PriceConfig.sol**
 	- Policy that deals with the price observations and which serves as the price reference that guides the market operations of the system.
 	**Dependencies:**
@@ -129,7 +128,7 @@ Olympus V3 uses the [Default Framework](https://github.com/fullyallocated/Defau
 	- `PRICE.changeMinimumTargetPrice`
 	**Roles:**
 	- `price_admin`: Has the ability to configure the observation frequency, as well as determine the moving average duration and the minimum target price.
-	![](olympus-price|500)
+	![](diagrams/olympus-price.svg)
 8. **BondManager.sol**
 	- Policy that manages the auctions and the issuance of OHM Bonds.
 	**Dependencies:**
