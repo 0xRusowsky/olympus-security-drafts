@@ -2,13 +2,13 @@
 | Multisig | Network | Address | Roles | Setup |
 | ------- | -------- | ------- | ------| ------- |
 | DAO Multisig | Mainnet | `0x245cc372C84B3645Bf0Ffe6538620B04a217988B` | [`executor`, `admin`, `emergency_restart`, `operator_admin`, `operator_operate`, `custodian`, `callback_admin`, `price_admin`] | 4/8 |
-| Emergency Multisig| Mainnet  | `0xa8A6ff2606b24F61AFA986381D8991DFcCCd2D55` | [`emergency_shutdown`] | 2/8 |
-| Policy Multisig | Mainnet | `0x0cf30dc0d48604A301dF8010cdc028C055336b2E` | [`heart_admin`, `operator_policy`, `price_admin`] | 3/5 |
+| Emergency Multisig| Mainnet  | `0xa8A6ff2606b24F61AFA986381D8991DFcCCd2D55` | [`emergency_shutdown`, `emergency_admin`] | 2/8 |
+| Policy Multisig | Mainnet | `0x0cf30dc0d48604A301dF8010cdc028C055336b2E` | [`heart_admin`, `operator_policy`, `price_admin`, `bondmanager_admin`, `liquidityvault_admin`, `bridge_admin`] | 3/5 |
 
 # Understanding Roles
 
 Olympus V3 uses the [Default Framework](https://github.com/fullyallocated/Default) to configure the protocol’s smart contracts and authorized addresses within the system.
-![](olympus-v3|1200)
+![](diagrams/olympus-v3.png|1200)
 ### Relevant Contracts
 1. **Kernel.sol**
 	- Contract registry that manages all the contracts of the system. The `Kernel` is in charge of module and policy upgradability.
@@ -143,6 +143,35 @@ Olympus V3 uses the [Default Framework](https://github.com/fullyallocated/Defau
 	**Roles:**
 	- `bondmanager_admin`: Has the ability to configure the auction parameters, create new bond markets, finalize them, as well as some emergency functions in case there is a malfunction.
 	
+9. **BLVaultManagerLido.sol**
+	- Policy that manages the auctions and the issuance of OHM Bonds.
+	**Dependencies:**
+	- `ROLES`
+	- `TRSRY`
+	- `MINTR`
+	- `BLREG`
+	**Permissions:**
+	- `MINTR.mintOhm`
+	- `MINTR.burnOhm`
+	- `MINTR.increaseMintApproval`
+	- `BLREG.addVault`
+	- `BLREG.removeVault`
+	**Roles:**
+	- `liquidityvault_admin`: Has the ability to configure the Lido Boosted Liquidity Vault parameters, as well as activating the vaults.
+	- `emergency_admin`: Has the ability shut down the Lido Boosted Liquidity Vaults.
+	
+10. **CrossChainBridge.sol**
+	- Policy that serves as the message bridge for cross-chain OHM transfers. Uses LayerZero as communication protocol.
+	**Dependencies:**
+	- `ROLES`
+	- `MINTR`
+	**Permissions:**
+	- `MINTR.mintOhm`
+	- `MINTR.burnOhm`
+	- `MINTR.increaseMintApproval`
+	**Roles:**
+	- `bridge_admin`: Has the ability to set the bridge configuration, as well as activating and deactivating the bridge.
+	
 # Active Roles
 
 | Network | Kernel Address | Executor Address | Label |
@@ -166,3 +195,6 @@ Olympus V3 uses the [Default Framework](https://github.com/fullyallocated/Defau
 | Mainnet | `ROLES.v1` | `0x6CAfd730Dc199Df73C16420C4fCAb18E3afbfA59` | `price_admin` | `0x245cc372C84B3645Bf0Ffe6538620B04a217988B` | DAO Multisig |
 | Mainnet | `ROLES.v1` | `0x6CAfd730Dc199Df73C16420C4fCAb18E3afbfA59` | `price_admin` | `0x245cc372C84B3645Bf0Ffe6538620B04a217988B` | Policy Multisig |
 | Mainnet | `ROLES.v1` | `0x6CAfd730Dc199Df73C16420C4fCAb18E3afbfA59` | `bondmanager_admin` | `0x245cc372C84B3645Bf0Ffe6538620B04a217988B` | Policy Multisig |
+| Mainnet | `ROLES.v1` | `0x6CAfd730Dc199Df73C16420C4fCAb18E3afbfA59` | `liquidityvault_admin` | `0x245cc372C84B3645Bf0Ffe6538620B04a217988B` | Policy Multisig |
+| Mainnet | `ROLES.v1` | `0x6CAfd730Dc199Df73C16420C4fCAb18E3afbfA59` | `emergency_admin` | `0xa8A6ff2606b24F61AFA986381D8991DFcCCd2D55` | Emergency Multisig |
+| Mainnet | `ROLES.v1` | `0x6CAfd730Dc199Df73C16420C4fCAb18E3afbfA59` | `bridge_admin` | `0x245cc372C84B3645Bf0Ffe6538620B04a217988B` | Policy Multisig |
